@@ -2,7 +2,32 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-classes-java.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-generated-sources-annotationProcessor-java.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-generated-sources-headers-java.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-reports-tests.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-test-results.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-tmp.main" target="11" />
       <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-A_proper_collection_to_avoid_duplicates.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-A_proper_collection_to_store_ordered_key-value_pairs.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-A_proper_sorted_collection_without_duplicates.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-An_unsolvable_problem.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-Removing_duplicates_and_sorting.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-Substitution_cipher.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-Theory.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-War_and_Peace.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-HashMap-Remove_long_names.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-HashMap-Theory.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-LinkedList_vs._ArrayList-Fast_for_ArrayList.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-LinkedList_vs._ArrayList-The_big_merge.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-LinkedList_vs._ArrayList-The_fair_exchange.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-LinkedList_vs._ArrayList-Theory.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-LinkedList_vs._ArrayList-Transfer_both_lists.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Unit_testing_with_JUnit-Assertion.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Unit_testing_with_JUnit-Failed_assertion.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Unit_testing_with_JUnit-Test_driven_development.main" target="11" />
+      <module name="Learning_Progress_Tracker.Topics-Unit_testing_with_JUnit-Theory.main" target="11" />
       <module name="Learning_Progress_Tracker.util.main" target="11" />
     </bytecodeTargetLevel>
   </component>

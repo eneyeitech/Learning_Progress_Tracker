@@ -631,6 +631,334 @@ files:
         }
     }
   learner_created: false
-feedback_link: https://hyperskill.org/projects/197/stages/981/implement#comment
-status: Unchecked
+- name: src/tracker/Persistence/StudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+    import tracker.Database.Store;
+
+    import java.util.List;
+
+    public class StudentRepository implements IStudentRepository{
+
+        private Store store = Store.getInstance();
+
+        @Override
+        public Student addStudent(Student student) {
+            return store.addStudent(student);
+        }
+
+        @Override
+        public Student findStudent(String email) {
+            return store.findStudent(email);
+        }
+
+        @Override
+        public boolean studentExist(String email) {
+            return store.studentExist(email);
+        }
+
+        @Override
+        public List<Student> allStudents() {
+            return store.all();
+        }
+    }
+  learner_created: true
+- name: src/tracker/Database/Store.java
+  visible: true
+  text: |+
+    package tracker.Database;
+
+    import tracker.Business.Student;
+
+    import java.util.ArrayList;
+    import java.util.HashMap;
+    import java.util.List;
+    import java.util.Map;
+
+    public class Store {
+        private static Store instance;
+
+        private Map<String, Student> studentMap;
+
+        private Store() {
+            studentMap = new HashMap<>();
+        }
+
+        public static Store getInstance() {
+            if (instance == null) {
+                instance = new Store();
+            }
+            return instance;
+        }
+
+
+        public Student addStudent(Student student) {
+            return studentMap.put(student.getEmail(), student);
+        }
+
+        public Student findStudent(String email) {
+            return studentMap.get(email);
+        }
+
+        public boolean studentExist(String email) {
+            return studentMap.containsKey(email);
+        }
+
+        public List<Student> all() {
+            List<Student> students = new ArrayList<>();
+            for (Map.Entry<String, Student> entry : studentMap.entrySet()) {
+                students.add(entry.getValue());
+            }
+            return students;
+        }
+
+        public Map<String, Student> getStudentMap() {
+            return studentMap;
+        }
+
+        public void setStudentMap(Map<String, Student> studentMap) {
+            this.studentMap = studentMap;
+        }
+    }
+
+  learner_created: true
+- name: src/tracker/Business/Student.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class Student {
+        private String firstName;
+        private String lastName;
+        private String email;
+
+        public Student() {
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Tracker.java
+  visible: true
+  text: |
+    package tracker;
+
+    import tracker.Business.Student;
+    import tracker.Business.StudentService;
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.Locale;
+    import java.util.Scanner;
+
+    public class Tracker {
+
+        private final Scanner scanner;
+        private List<Student> studentList;
+        private final StudentService studentService;
+
+        public Tracker() {
+            this.scanner = new Scanner(System.in);
+            studentList = new ArrayList<>();
+            studentService = new StudentService();
+        }
+
+        public void run() {
+            options();
+        }
+
+        public void options() {
+            System.out.println("Learning Progress Tracker");
+            while (true) {
+                String sel = scanner.nextLine().toLowerCase(Locale.ROOT);
+                switch (sel) {
+                    case "exit":
+                        System.out.println("Bye!");
+                        System.exit(0);
+                        break;
+                    case "back":
+                        System.out.println("Enter 'exit' to exit the program");
+                        break;
+                    case "":
+                        System.out.println("no input");
+                        break;
+                    case "add students":
+                        System.out.println("Enter student credentials or 'back' to return:");
+                        int ex = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            //System.out.println(string);
+                            String[] input = string.split(" ");
+                            if (input.length >= 3){
+                                String firstName = input[0];
+                                String lastName = "";
+                                String email = input[input.length-1];
+                                for (int i = 0; i < input.length; i++) {
+                                    if (i != 0 && i != input.length - 1) {
+                                        lastName = lastName + input[i] + " ";
+                                    }
+                                }
+                                lastName = lastName.strip();
+                                boolean valid = true;
+                                if (firstName.length() <= 1 || !firstName.matches("[a-zA-Z'\\-]*") || firstName.startsWith("'") || firstName.startsWith("-") || firstName.endsWith("-") || firstName.endsWith("'") || firstName.contains("'-") || firstName.contains("-'") || firstName.contains("--") || firstName.contains("''")){
+                                    System.out.println("Incorrect first name.");
+                                    valid = false;
+                                }
+                                if (lastName.length() <= 1 || !lastName.matches("[a-zA-Z'\\- ]*") || lastName.startsWith("'") || lastName.startsWith("-") || lastName.endsWith("-") || lastName.endsWith("'") || lastName.contains("'-") || lastName.contains("-'") || lastName.contains("--") || lastName.contains("''")){
+                                    System.out.println("Incorrect last name.");
+                                    valid = false;
+                                    //System.out.println(lastName);
+                                }
+
+                                if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]+$")) {
+                                    System.out.println("Incorrect email.");
+                                    valid = false;
+                                }
+
+                                if (valid){
+                                    Student createdStudent = studentService.createStudent(input[0], input[1], input[2]);
+                                    if (createdStudent != null) {
+                                        add(createdStudent);
+                                        System.out.println("The student has been added.");
+                                    }
+                                }
+
+                            } else {
+                                if (input.length == 1 && string.equalsIgnoreCase("back")) {
+                                    int noOfStudent = addAfterExit();
+                                    System.out.printf("\nTotal %s students have been added.\n", noOfStudent);
+
+                                    ex = 0;
+                                } else {
+                                    System.out.println("Incorrect credentials.");
+                                }
+                            }
+
+                        } while (ex != 0);
+                        break;
+                    default:
+                        if (sel.isBlank() || sel.isEmpty()) {
+                            System.out.println("no input");
+                        } else {
+                            System.out.println("Unknown command!");
+                        }
+                        break;
+                }
+            }
+        }
+
+        public void add(Student s){
+            studentList.add(s);
+        }
+
+        public int addAfterExit() {
+            for (Student s: studentList) {
+                studentService.save(s);
+            }
+            int total = studentList.size();
+            studentList = new ArrayList<>();
+            return total;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/StudentService.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    public class StudentService {
+
+        private StudentRepository studentRepository;
+
+
+        public StudentService() {
+            studentRepository = new StudentRepository();
+
+        }
+
+        public Student createStudent(String fName, String lName, String email) {
+            Student student = new Student();
+            if (fName.isBlank() || fName.isEmpty()) {
+                return null;
+            }
+            if (lName.isBlank() || lName.isEmpty()) {
+                return null;
+            }
+            if (email.isBlank() || email.isEmpty()) {
+                return null;
+            }
+            student.setFirstName(fName);
+            student.setLastName(lName);
+            student.setEmail(email);
+            return student;
+        }
+
+
+
+        public Student save(Student student) {
+            return studentRepository.addStudent(student);
+        }
+    }
+  learner_created: true
+- name: src/tracker/Persistence/IStudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+
+    import java.util.List;
+
+    public interface IStudentRepository {
+        public Student addStudent(Student student);
+        public Student findStudent(String email);
+        public boolean studentExist(String email);
+        public List<Student> allStudents();
+    }
+  learner_created: true
+- name: src/tracker/Helper/IDGenerator.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/Course.java
+  visible: true
+  learner_created: true
+- name: test/tracker/Business/CourseTest.java
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/14398#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Fri, 25 Feb 2022 12:19:39 UTC
 record: -1
