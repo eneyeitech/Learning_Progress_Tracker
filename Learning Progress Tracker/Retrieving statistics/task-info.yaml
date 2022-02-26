@@ -957,6 +957,646 @@ files:
         }
     }
   learner_created: false
+- name: src/tracker/Persistence/StudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+    import tracker.Database.Store;
+
+    import java.util.List;
+
+    public class StudentRepository implements IStudentRepository{
+
+        private Store store = Store.getInstance();
+
+        @Override
+        public Student addStudent(Student student) {
+            return store.addStudent(student);
+        }
+
+        @Override
+        public Student findStudent(String email) {
+            return store.findStudent(email);
+        }
+
+        @Override
+        public boolean studentExist(String email) {
+            return store.studentExist(email);
+        }
+
+        @Override
+        public Student addStudentWithId(Student student) {
+            return store.addStudentWithId(student);
+        }
+
+        @Override
+        public Student findStudentWithId(String id) {
+            return store.findStudentWithId(id);
+        }
+
+        @Override
+        public boolean studentExistWithId(String id) {
+            return store.studentExistWithId(id);
+        }
+
+        @Override
+        public List<Student> allStudents() {
+            return store.all();
+        }
+
+        @Override
+        public List<Student> allStudentsWithId() {
+            return store.allWithId();
+        }
+
+        @Override
+        public Student update(Student student) {
+            return store.update(student);
+        }
+    }
+  learner_created: true
+- name: src/tracker/Database/Store.java
+  visible: true
+  text: |+
+    package tracker.Database;
+
+    import tracker.Business.Student;
+
+    import java.util.*;
+
+    public class Store {
+        private static Store instance;
+
+        private Map<String, Student> studentMap;
+        private Map<String, Student> studentMapWithId;
+
+        private Store() {
+            studentMap = new HashMap<>();
+            studentMapWithId = new TreeMap<>();
+        }
+
+        public static Store getInstance() {
+            if (instance == null) {
+                instance = new Store();
+            }
+            return instance;
+        }
+
+
+        public Student addStudent(Student student) {
+            return studentMap.put(student.getEmail(), student);
+        }
+
+        public Student findStudent(String email) {
+            return studentMap.get(email);
+        }
+
+        public boolean studentExist(String email) {
+            return studentMap.containsKey(email);
+        }
+
+        public List<Student> all() {
+            List<Student> students = new ArrayList<>();
+            for (Map.Entry<String, Student> entry : studentMap.entrySet()) {
+                students.add(entry.getValue());
+            }
+            return students;
+        }
+
+        public Student addStudentWithId(Student student) {
+            return studentMapWithId.put(student.getId(), student);
+        }
+
+        public Student findStudentWithId(String id) {
+            return studentMapWithId.get(id);
+        }
+
+        public boolean studentExistWithId(String id) {
+            return studentMapWithId.containsKey(id);
+        }
+
+        public List<Student> allWithId() {
+            List<Student> students = new ArrayList<>();
+            for (Map.Entry<String, Student> entry : studentMap.entrySet()) {
+                students.add(entry.getValue());
+            }
+            return students;
+        }
+
+        public Student update(Student student){
+            studentMap.put(student.getEmail(), student);
+            studentMapWithId.put(student.getId(), student);
+            return student;
+        }
+
+        public Map<String, Student> getStudentMap() {
+            return studentMap;
+        }
+
+        public void setStudentMap(Map<String, Student> studentMap) {
+            this.studentMap = studentMap;
+        }
+    }
+
+  learner_created: true
+- name: src/tracker/Business/Student.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import java.util.HashMap;
+    import java.util.Map;
+
+    public class Student implements Comparable{
+        private String id;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private Map<String, Course> courses;
+
+        public Student() {
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Map<String, Course> getCourses() {
+            return courses;
+        }
+
+        public void setCourses(Map<String, Course> courses) {
+            this.courses = new HashMap<>(courses);
+        }
+
+
+        @Override
+        public int compareTo(Object o) {
+            Student s = (Student) o;
+            return this.id.compareTo(((Student) o).getId());
+        }
+    }
+  learner_created: true
+- name: src/tracker/Tracker.java
+  visible: true
+  text: |
+    package tracker;
+
+    import tracker.Business.Course;
+    import tracker.Business.Student;
+    import tracker.Business.StudentService;
+    import tracker.Helper.IDGenerator;
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.*;
+
+    public class Tracker {
+
+        private final Scanner scanner;
+        private List<Student> studentList;
+        private final StudentService studentService;
+        private final IDGenerator idGenerator;
+
+        public Tracker() {
+            this.scanner = new Scanner(System.in);
+            studentList = new ArrayList<>();
+            studentService = new StudentService();
+            idGenerator = new IDGenerator();
+        }
+
+        public void run() {
+            options();
+        }
+
+        public void options() {
+            System.out.println("Learning Progress Tracker");
+            while (true) {
+                String sel = scanner.nextLine().toLowerCase(Locale.ROOT);
+                switch (sel) {
+                    case "exit":
+                        System.out.println("Bye!");
+                        System.exit(0);
+                        break;
+                    case "list":
+
+                        Set<Student> studentList = new TreeSet<>(studentService.allStudents());
+                        if (studentList.size() > 0) {
+                            System.out.println("Students:");
+                            for (Student s: studentList) {
+                                System.out.println(s.getId());
+                            }
+                        } else {
+                            System.out.println("No students found");
+                        }
+                        break;
+                    case "find":
+                        System.out.println("Enter an id or 'back' to return");
+                        int xy = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            if (string.equalsIgnoreCase("back")) {
+                                xy = 0;
+                            } else {
+                                if (!studentService.studentExistWithId(string)) {
+                                    System.out.printf("\nNo student is found for id=%s\n", string);
+                                } else {
+                                    Student foundStudent = studentService.findById(string);
+                                    Map<String, Course> courses = new HashMap<>(foundStudent.getCourses());
+                                    Course java = courses.get(Course.JAVA);
+                                    Course dsa = courses.get(Course.DSA);
+                                    Course databases = courses.get(Course.DATABASES);
+                                    Course spring = courses.get(Course.Spring);
+                                    System.out.printf("\n%s points: Java=%d; DSA=%d; Databases=%d; Spring=%d\n", string, java.getTotal(), dsa.getTotal(), databases.getTotal(), spring.getTotal());
+                                }
+                            }
+                        } while (xy != 0);
+                        break;
+                    case "add points":
+                        System.out.println("Enter an id and points or 'back' to return");
+                        int xx = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            if (string.equalsIgnoreCase("back")) {
+                                xx = 0;
+                            } else {
+                                String[] input = string.split(" ");
+                                if (input.length == 5) {
+                                    String id = input[0];
+
+
+                                    try {
+                                        int p1 = Integer.parseInt(input[1]);
+                                        int p2 = Integer.parseInt(input[2]);
+                                        int p3 = Integer.parseInt(input[3]);
+                                        int p4 = Integer.parseInt(input[4]);
+                                        if (!studentService.studentExistWithId(id)) {
+                                            System.out.printf("\nNo student is found for id=%s\n", id);
+                                        } else {
+                                            if(p1 < 0 || p2 < 0 || p3 < 0 || p4 < 0 ) {
+                                                System.out.println("Incorrect points format");
+                                            } else {
+                                                Student foundStudent = studentService.findById(id);
+                                                List<Integer> points = List.of(p1, p2, p3, p4);
+                                                studentService.updateCoursePoints(foundStudent, points);
+                                                System.out.println("Points updated");
+                                            }
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Incorrect points format");
+                                    }
+
+
+                                } else {
+                                    System.out.println("Incorrect points format");
+                                }
+                            }
+
+                        } while (xx != 0);
+                        break;
+                    case "back":
+                        System.out.println("Enter 'exit' to exit the program");
+                        break;
+                    case "":
+                        System.out.println("no input");
+                        break;
+                    case "add students":
+                        System.out.println("Enter student credentials or 'back' to return:");
+                        int ex = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            //System.out.println(string);
+                            String[] input = string.split(" ");
+                            if (input.length >= 3) {
+                                String firstName = input[0];
+                                String lastName = "";
+                                String email = input[input.length-1];
+                                for (int i = 0; i < input.length; i++) {
+                                    if (i != 0 && i != input.length - 1) {
+                                        lastName = lastName + input[i] + " ";
+                                    }
+                                }
+                                lastName = lastName.strip();
+                                boolean valid = true;
+                                if (firstName.length() <= 1 || !firstName.matches("[a-zA-Z'\\-]*") || firstName.startsWith("'") || firstName.startsWith("-") || firstName.endsWith("-") || firstName.endsWith("'") || firstName.contains("'-") || firstName.contains("-'") || firstName.contains("--") || firstName.contains("''")){
+                                    System.out.println("Incorrect first name.");
+                                    valid = false;
+                                }
+                                if (lastName.length() <= 1 || !lastName.matches("[a-zA-Z'\\- ]*") || lastName.startsWith("'") || lastName.startsWith("-") || lastName.endsWith("-") || lastName.endsWith("'") || lastName.contains("'-") || lastName.contains("-'") || lastName.contains("--") || lastName.contains("''")){
+                                    System.out.println("Incorrect last name.");
+                                    valid = false;
+                                    //System.out.println(lastName);
+                                }
+
+                                if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]+$")) {
+                                    System.out.println("Incorrect email.");
+                                    valid = false;
+                                }
+
+
+                                if (valid){
+                                    String id = idGenerator.generate4Digits();
+                                    //System.out.println(id);
+                                    if (studentService.studentExistWithEmail(email)) {
+                                        System.out.println("This email is already taken.");
+                                    } else {
+                                        Student createdStudent = studentService.createStudent(id, firstName, lastName, email);
+                                        if (createdStudent != null) {
+                                            add(createdStudent);
+                                            System.out.println("The student has been added.");
+                                        }
+                                    }
+
+                                }
+
+                            } else {
+                                if (input.length == 1 && string.equalsIgnoreCase("back")) {
+                                    int noOfStudent = addAfterExit();
+                                    System.out.printf("\nTotal %s students have been added.\n", noOfStudent);
+
+                                    ex = 0;
+                                } else {
+                                    System.out.println("Incorrect credentials.");
+                                }
+                            }
+
+                        } while (ex != 0);
+                        break;
+                    default:
+                        if (sel.isBlank() || sel.isEmpty()) {
+                            System.out.println("no input");
+                        } else {
+                            System.out.println("Unknown command!");
+                        }
+                        break;
+                }
+            }
+        }
+
+        public void add(Student s){
+            studentList.add(s);
+            studentService.save(s);
+        }
+
+        public int addAfterExit() {
+            for (Student s: studentList) {
+                //studentService.save(s);
+            }
+            int total = studentList.size();
+            studentList = new ArrayList<>();
+            return total;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Helper/IDGenerator.java
+  visible: true
+  text: |
+    package tracker.Helper;
+
+    import java.util.Random;
+
+    public class IDGenerator {
+        private int leftLimit = 48;
+        private int rightLimit = 57;
+        private int targetStringLength = 5;
+        private Random random = new Random(1000000);
+
+        public String generate4Digits() {
+            return random.ints(leftLimit, rightLimit + 1)
+                    .limit(targetStringLength)
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/Course.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class Course {
+        public final static String JAVA = "Java";
+        public final static String DSA = "Data Structures and Algorithms (DSA)";
+        public final static String DATABASES = "Databases";
+        public final static String Spring = "Spring";
+
+        private String courseName;
+        private int total = 0;
+
+        public Course() {
+        }
+
+        public String getCourseName() {
+            return courseName;
+        }
+
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+
+        public int getTotal() {
+            return total;
+        }
+
+        public void setTotal(int point) {
+            this.total = getTotal() + point;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/StudentService.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.ArrayList;
+    import java.util.HashMap;
+    import java.util.List;
+    import java.util.Map;
+
+    public class StudentService {
+
+        private StudentRepository studentRepository;
+
+
+        public StudentService() {
+            studentRepository = new StudentRepository();
+
+        }
+
+        public Student createStudent(String id, String fName, String lName, String email) {
+            Student student = new Student();
+            if (fName.isBlank() || fName.isEmpty()) {
+                return null;
+            }
+            if (lName.isBlank() || lName.isEmpty()) {
+                return null;
+            }
+            if (email.isBlank() || email.isEmpty()) {
+                return null;
+            }
+            student.setId(id);
+            student.setFirstName(fName);
+            student.setLastName(lName);
+            student.setEmail(email);
+            Course course1 = new Course();
+            Course course2 = new Course();
+            Course course3 = new Course();
+            Course course4 = new Course();
+            course1.setCourseName(Course.JAVA);
+            course2.setCourseName(Course.DSA);
+            course3.setCourseName(Course.DATABASES);
+            course4.setCourseName(Course.Spring);
+            Map<String, Course> courses = new HashMap<>();
+            courses.put(course1.getCourseName(), course1);
+            courses.put(course2.getCourseName(), course2);
+            courses.put(course3.getCourseName(), course3);
+            courses.put(course4.getCourseName(), course4);
+            student.setCourses(courses);
+
+            return student;
+        }
+
+
+
+        public Student save(Student student) {
+            studentRepository.addStudentWithId(student);
+            return studentRepository.addStudent(student);
+        }
+
+        public Student findByEmail(String email) {
+            return studentRepository.findStudent(email);
+        }
+
+        public Student findById(String id) {
+            return studentRepository.findStudentWithId(id);
+        }
+
+        public boolean studentExistWithEmail(String email) {
+            return studentRepository.studentExist(email);
+        }
+
+        public boolean studentExistWithId(String id) {
+            return studentRepository.studentExistWithId(id);
+        }
+
+        public List<Student> allStudents() {
+            return studentRepository.allStudents();
+        }
+
+        public void updateCoursePoints(Student student, List<Integer> points) {
+            Map<String, Course> courses = new HashMap<>(student.getCourses());
+            courses.get(Course.JAVA).setTotal(points.get(0));
+            courses.get(Course.DSA).setTotal(points.get(1));
+            courses.get(Course.DATABASES).setTotal(points.get(2));
+            courses.get(Course.Spring).setTotal(points.get(3));
+            studentRepository.update(student);
+        }
+    }
+  learner_created: true
+- name: src/tracker/Persistence/IStudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+
+    import java.util.List;
+
+    public interface IStudentRepository {
+        public Student addStudent(Student student);
+        public Student findStudent(String email);
+        public boolean studentExist(String email);
+        public Student addStudentWithId(Student student);
+        public Student findStudentWithId(String id);
+        public boolean studentExistWithId(String id);
+        public List<Student> allStudents();
+        public List<Student> allStudentsWithId();
+        public Student update(Student student);
+    }
+  learner_created: true
+- name: test/tracker/Business/CourseTest.java
+  visible: true
+  text: |-
+    package tracker.Business;
+
+    import org.junit.jupiter.api.Test;
+
+    import static org.junit.jupiter.api.Assertions.*;
+
+    class CourseTest {
+
+        @Test
+        void setTotal() {
+            Course course = new Course();
+            course.setTotal(2);
+            assertEquals(2, course.getTotal());
+        }
+    }
+  learner_created: false
+- name: src/tracker/Business/CourseService.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/CourseEnrollment.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/TaskCompletion.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/CoursePoint.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/Completion.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/14399#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: "Wrong answer in test #35\n\nExpected most popular: Java, DSA, Databases,\
+    \ Spring, but your output was:\n\nPlease find below the output of your program\
+    \ during this failed test.\nNote that the &#39;&gt;&#39; character indicates the\
+    \ beginning of the input line.\n\n---\n\nLearning Progress Tracker\n&gt; add students\n\
+    Enter student credentials or &#39;back&#39; to return:\n&gt; Amye Uriisa address1@mail.com\n\
+    The student has been added.\n&gt; Ricki Trovillion address2@mail.com\nThe student\
+    \ has been added.\n&gt; Van Fawnia address3@mail.com\nThe student has been added.\n\
+    &gt; Aurie Dorisa address4@mail.com\nThe student has been added.\n&gt; back\n\n\
+    Total 4 students have been added.\n&gt; list\nStudents:\n00072\n19262\n22692\n\
+    72377\n&gt; add points\nEnter an id and points or &#39;back&#39; to return\n&gt;\
+    \ 00072 5 4 3 1\nPoints updated.\n&gt; 19262 5 4 3 1\nPoints updated.\n&gt; 22692\
+    \ 5 4 3 1\nPoints updated.\n&gt; 72377 5 4 3 1\nPoints updated.\n&gt; back\n&gt;\
+    \ statistics\nType the name of a course to see details or &#39;back&#39; to quit:\n\
+    \nMost popular: Java, DSA, Databases, Spring, \nLeast popular: Spring\nHighest\
+    \ activity: Java\nLowest activity: Spring\nEasiest course: Java\nHardest course:\
+    \ Spring"
+  time: Sat, 26 Feb 2022 15:16:40 UTC
 record: -1

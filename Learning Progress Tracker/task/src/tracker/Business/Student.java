@@ -8,6 +8,10 @@ public class Student implements Comparable{
     private String firstName;
     private String lastName;
     private String email;
+    private boolean javaEnrolled;
+    private boolean dsaEnrolled;
+    private boolean databasesEnrolled;
+    private boolean springEnrolled;
     private Map<String, Course> courses;
 
     public Student() {
@@ -53,6 +57,37 @@ public class Student implements Comparable{
         this.courses = new HashMap<>(courses);
     }
 
+    public boolean isJavaEnrolled() {
+        return javaEnrolled;
+    }
+
+    public void setJavaEnrolled(boolean javaEnrolled) {
+        this.javaEnrolled = javaEnrolled;
+    }
+
+    public boolean isDsaEnrolled() {
+        return dsaEnrolled;
+    }
+
+    public void setDsaEnrolled(boolean dsaEnrolled) {
+        this.dsaEnrolled = dsaEnrolled;
+    }
+
+    public boolean isDatabasesEnrolled() {
+        return databasesEnrolled;
+    }
+
+    public void setDatabasesEnrolled(boolean databasesEnrolled) {
+        this.databasesEnrolled = databasesEnrolled;
+    }
+
+    public boolean isSpringEnrolled() {
+        return springEnrolled;
+    }
+
+    public void setSpringEnrolled(boolean springEnrolled) {
+        this.springEnrolled = springEnrolled;
+    }
 
     @Override
     public int compareTo(Object o) {

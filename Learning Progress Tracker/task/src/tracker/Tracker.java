@@ -1,11 +1,10 @@
 package tracker;
 
-import tracker.Business.Course;
-import tracker.Business.Student;
-import tracker.Business.StudentService;
+import tracker.Business.*;
 import tracker.Helper.IDGenerator;
 import tracker.Persistence.StudentRepository;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Tracker {
@@ -14,6 +13,7 @@ public class Tracker {
     private List<Student> studentList;
     private final StudentService studentService;
     private final IDGenerator idGenerator;
+    private List<Completion> completionList;
 
     public Tracker() {
         this.scanner = new Scanner(System.in);
@@ -34,6 +34,51 @@ public class Tracker {
                 case "exit":
                     System.out.println("Bye!");
                     System.exit(0);
+                    break;
+                case "statistics":
+                    CourseService cs = new CourseService();
+                    System.out.println("Type the name of a course to see details or 'back' to quit:");
+                    String si = "n/a";
+                    System.out.printf("\nMost popular: %s\n" +
+                            "Least popular: %s\n" +
+                            "Highest activity: %s\n" +
+                            "Lowest activity: %s\n" +
+                            "Easiest course: %s\n" +
+                            "Hardest course: %s\n",
+                            cs.mostPopular(),
+                            cs.leastPopular(),
+                            cs.highestActivity(),
+                            cs.lowestActivity(),
+                            cs.easiestCourse(),
+                            cs.hardestCourse());
+                    int yx = 1;
+                    do {
+                        String sele = scanner.nextLine().toLowerCase(Locale.ROOT);
+                        switch (sele) {
+                            case "java":
+                                System.out.println("Java");
+                                processStat(sele);
+                                break;
+                            case "dsa":
+                                System.out.println("DSA");
+                                processStat(sele);
+                                break;
+                            case "databases":
+                                System.out.println("Databases");
+                                processStat(sele);
+                                break;
+                            case "spring":
+                                System.out.println("Spring");
+                                processStat(sele);
+                                break;
+                            case "back":
+                                yx = 0;
+                                break;
+                            default:
+                                System.out.println("Unknown course");
+                        }
+
+                    }while (yx != 0);
                     break;
                 case "list":
 
@@ -96,7 +141,7 @@ public class Tracker {
                                             Student foundStudent = studentService.findById(id);
                                             List<Integer> points = List.of(p1, p2, p3, p4);
                                             studentService.updateCoursePoints(foundStudent, points);
-                                            System.out.println("Points updated");
+                                            System.out.println("Points updated.");
                                         }
                                     }
                                 } catch (NumberFormatException e) {
@@ -188,6 +233,62 @@ public class Tracker {
                     break;
             }
         }
+    }
+
+    public void processStat(String course) {
+        completionList = new ArrayList<>();
+        Set<Student> studentList = new TreeSet<>(studentService.allStudents());
+        System.out.println("id  points      completed");
+        if (studentList.size() > 0) {
+            for (Student s: studentList) {
+                Map<String, Course> courses = new HashMap<>(s.getCourses());
+                Course course1 = null;
+                switch (course) {
+                    case "java":
+                        course1 = courses.get(Course.JAVA);
+                        courseStat(course1, s.getId(), 600);
+                        break;
+                    case "dsa":
+                        course1 = courses.get(Course.DSA);
+                        courseStat(course1, s.getId(), 400);
+                        break;
+                    case "databases":
+                        course1 = courses.get(Course.DATABASES);
+                        courseStat(course1, s.getId(), 480);
+                        break;
+                    case "spring":
+                        course1 = courses.get(Course.Spring);
+                        courseStat(course1, s.getId(), 550);
+                        break;
+                    default:
+                }
+
+            }
+            printStat();
+        }
+    }
+
+    public void printStat() {
+        Comparator c = Collections.reverseOrder();
+        Collections.sort(completionList,c);
+        for (Completion completion: completionList) {
+            Double toBeTruncated = new Double(completion.getCompleted());
+
+            Double truncatedDouble = new BigDecimal(toBeTruncated).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+            System.out.println(completion.getId() +
+                    " "+completion.getPoints()
+                    +"        "+truncatedDouble+"%");
+        }
+    }
+
+    public void courseStat(Course course, String id, float totalPoints) {
+        int points = course.getTotal();
+        if (points == 0) {
+            return;
+        }
+        float completed = (points/totalPoints) * 100;
+        Completion completion = new Completion(id, points, completed);
+        completionList.add(completion);
     }
 
     public void add(Student s){

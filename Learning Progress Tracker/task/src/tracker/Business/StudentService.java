@@ -79,10 +79,48 @@ public class StudentService {
 
     public void updateCoursePoints(Student student, List<Integer> points) {
         Map<String, Course> courses = new HashMap<>(student.getCourses());
-        courses.get(Course.JAVA).setTotal(points.get(0));
-        courses.get(Course.DSA).setTotal(points.get(1));
-        courses.get(Course.DATABASES).setTotal(points.get(2));
-        courses.get(Course.Spring).setTotal(points.get(3));
+        int javaPoint = points.get(0);
+        int dsaPoint = points.get(1);
+        int databasesPoint = points.get(2);
+        int springPoint = points.get(3);
+        if (javaPoint != 0 && !student.isJavaEnrolled()) {
+            Course.setJavaEnrollee(1);
+            student.setJavaEnrolled(true);
+        }
+        if (dsaPoint != 0 && !student.isDsaEnrolled()) {
+            Course.setDsaEnrollee(1);
+            student.setDsaEnrolled(true);
+        }
+        if (databasesPoint != 0 && !student.isDatabasesEnrolled()) {
+            Course.setDatabasesEnrollee(1);
+            student.setDatabasesEnrolled(true);
+        }
+        if (springPoint != 0 && !student.isSpringEnrolled()) {
+            Course.setSpringEnrollee(1);
+            student.setSpringEnrolled(true);
+        }
+        if (javaPoint > 0) {
+            Course.setJavaTaskCompleted(1);
+        }
+        if (dsaPoint > 0) {
+            Course.setDsaTaskCompleted(1);
+        }
+        if (databasesPoint > 0) {
+            Course.setDatabasesTaskCompleted(1);
+        }
+        if (springPoint > 0) {
+            Course.setSpringTaskCompleted(1);
+        }
+
+        Course.setJavaPoints(javaPoint);
+        Course.setDsaPoints(dsaPoint);
+        Course.setDatabasesPoints(databasesPoint);
+        Course.setSpringPoints(springPoint);
+
+        courses.get(Course.JAVA).setTotal(javaPoint);
+        courses.get(Course.DSA).setTotal(dsaPoint);
+        courses.get(Course.DATABASES).setTotal(databasesPoint);
+        courses.get(Course.Spring).setTotal(springPoint);
         studentRepository.update(student);
     }
 }
