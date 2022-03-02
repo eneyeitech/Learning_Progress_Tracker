@@ -27,23 +27,6 @@ files:
         useJUnitPlatform()
     }
   learner_created: false
-- name: test/tracker/SampleTest.java
-  visible: true
-  text: |
-    package tracker;
-
-    import org.junit.jupiter.api.Test;
-
-    import static org.junit.jupiter.api.Assertions.*;
-
-    public class SampleTest {
-
-        @Test
-        void test() {
-            assertEquals(5, 2 + 3);
-        }
-    }
-  learner_created: false
 - name: test/LearningProgressTrackerTest.java
   visible: false
   text: |
@@ -1545,6 +1528,38 @@ files:
         public Student update(Student student);
     }
   learner_created: true
+- name: src/tracker/Business/CourseService.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/CourseEnrollment.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/TaskCompletion.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/CoursePoint.java
+  visible: true
+  learner_created: true
+- name: src/tracker/Business/Completion.java
+  visible: true
+  learner_created: true
+- name: test/tracker/SampleTest.java
+  visible: true
+  text: |
+    package tracker;
+
+    import org.junit.jupiter.api.Test;
+
+    import static org.junit.jupiter.api.Assertions.*;
+
+    public class SampleTest {
+
+        @Test
+        void test() {
+            assertEquals(5, 2 + 3);
+        }
+    }
+  learner_created: true
 - name: test/tracker/Business/CourseTest.java
   visible: true
   text: |-
@@ -1564,39 +1579,30 @@ files:
         }
     }
   learner_created: false
-- name: src/tracker/Business/CourseService.java
+- name: src/tracker/controller/Controller.java
   visible: true
   learner_created: true
-- name: src/tracker/Business/CourseEnrollment.java
+- name: src/tracker/model/Course.java
   visible: true
   learner_created: true
-- name: src/tracker/Business/TaskCompletion.java
+- name: src/tracker/Validator.java
   visible: true
   learner_created: true
-- name: src/tracker/Business/CoursePoint.java
+- name: src/tracker/UI.java
   visible: true
   learner_created: true
-- name: src/tracker/Business/Completion.java
+- name: src/tracker/model/Student.java
+  visible: true
+  learner_created: true
+- name: src/tracker/StudentsRepository.java
+  visible: true
+  learner_created: true
+- name: src/tracker/model/TrackCourseStats.java
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/learn/step/14399#comment
-status: Failed
+status: Solved
 feedback:
-  message: "Wrong answer in test #35\n\nExpected most popular: Java, DSA, Databases,\
-    \ Spring, but your output was:\n\nPlease find below the output of your program\
-    \ during this failed test.\nNote that the &#39;&gt;&#39; character indicates the\
-    \ beginning of the input line.\n\n---\n\nLearning Progress Tracker\n&gt; add students\n\
-    Enter student credentials or &#39;back&#39; to return:\n&gt; Amye Uriisa address1@mail.com\n\
-    The student has been added.\n&gt; Ricki Trovillion address2@mail.com\nThe student\
-    \ has been added.\n&gt; Van Fawnia address3@mail.com\nThe student has been added.\n\
-    &gt; Aurie Dorisa address4@mail.com\nThe student has been added.\n&gt; back\n\n\
-    Total 4 students have been added.\n&gt; list\nStudents:\n00072\n19262\n22692\n\
-    72377\n&gt; add points\nEnter an id and points or &#39;back&#39; to return\n&gt;\
-    \ 00072 5 4 3 1\nPoints updated.\n&gt; 19262 5 4 3 1\nPoints updated.\n&gt; 22692\
-    \ 5 4 3 1\nPoints updated.\n&gt; 72377 5 4 3 1\nPoints updated.\n&gt; back\n&gt;\
-    \ statistics\nType the name of a course to see details or &#39;back&#39; to quit:\n\
-    \nMost popular: Java, DSA, Databases, Spring, \nLeast popular: Spring\nHighest\
-    \ activity: Java\nLowest activity: Spring\nEasiest course: Java\nHardest course:\
-    \ Spring"
-  time: Sat, 26 Feb 2022 15:16:40 UTC
-record: -1
+  message: Congratulations!
+  time: Tue, 01 Mar 2022 11:23:05 UTC
+record: 4

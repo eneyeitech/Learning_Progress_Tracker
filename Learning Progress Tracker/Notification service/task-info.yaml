@@ -1054,6 +1054,1923 @@ files:
         }
     }
   learner_created: false
+- name: src/tracker/Business/CourseService.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.*;
+
+    public class CourseService {
+
+        private StudentRepository studentRepository;
+        private int javaEnrollees;
+        private int dsaEnrollees;
+        private int databasesEnrollees;
+        private int springEnrollees;
+        public static boolean equalEnrollment = false;
+
+        public static boolean out = false;
+
+        private int javaTaskCompleted;
+        private int dsaTaskCompleted;
+        private int databasesTaskCompleted;
+        private int springTaskCompleted;
+        public static boolean equalTaskCompleted = false;
+
+        private int javaPoints;
+        private int dsaPoints;
+        private int databasesPoints;
+        private int springPoints;
+        public static boolean equalPoints = false;
+
+        private List<CourseEnrollment> list;
+        private List<TaskCompletion> list1;
+        private List<CoursePoint> list2;
+
+        public CourseService() {
+            studentRepository = new StudentRepository();
+
+            javaEnrollees = Course.getJavaEnrollee();
+            dsaEnrollees = Course.getDsaEnrollee();
+            databasesEnrollees = Course.getDatabasesEnrollee();
+            springEnrollees = Course.getSpringEnrollee();
+
+            javaTaskCompleted = Course.getJavaTaskCompleted();
+            dsaTaskCompleted = Course.getDsaTaskCompleted();
+            databasesTaskCompleted = Course.getDatabasesTaskCompleted();
+            springTaskCompleted = Course.getSpringTaskCompleted();
+
+            javaPoints = Course.getJavaPoints();
+            dsaPoints = Course.getDsaPoints();
+            databasesPoints = Course.getDatabasesPoints();
+            springPoints = Course.getSpringPoints();
+
+            list = new ArrayList<>();
+            if (javaEnrollees > 0) {
+                list.add(new CourseEnrollment("Java", javaEnrollees));
+            }
+            if (dsaEnrollees > 0) {
+                list.add(new CourseEnrollment("DSA", dsaEnrollees));
+            }
+            if (databasesEnrollees > 0) {
+                list.add(new CourseEnrollment("Databases", databasesEnrollees));
+            }
+            if (springEnrollees > 0) {
+                list.add(new CourseEnrollment("Spring", springEnrollees));
+            }
+
+            if (javaEnrollees > 0 || dsaEnrollees > 0 || databasesEnrollees > 0 || springEnrollees > 0) {
+                if (javaEnrollees == dsaEnrollees && dsaEnrollees == databasesEnrollees && databasesEnrollees == springEnrollees) {
+                    CourseService.equalEnrollment = true;
+                }
+                out = true;
+            }
+            if (javaTaskCompleted > 0 || dsaTaskCompleted > 0 || databasesTaskCompleted > 0 || springTaskCompleted > 0) {
+                if (javaTaskCompleted == dsaTaskCompleted && dsaTaskCompleted == databasesTaskCompleted && databasesTaskCompleted == springTaskCompleted) {
+                    CourseService.equalTaskCompleted = true;
+                }
+                out = true;
+            }
+            if (javaPoints > 0 || dsaPoints > 0 || databasesPoints > 0 || springPoints > 0) {
+                if (javaPoints == dsaPoints && dsaPoints == databasesPoints && databasesPoints == springPoints) {
+                    CourseService.equalPoints = true;
+                }
+                out = true;
+            }
+
+            list1 = new ArrayList<>();
+            if (javaTaskCompleted > 0) {
+                list1.add(new TaskCompletion("Java", javaTaskCompleted));
+            }
+            if (dsaTaskCompleted > 0) {
+                list1.add(new TaskCompletion("DSA", dsaTaskCompleted));
+            }
+            if (databasesTaskCompleted > 0) {
+                list1.add(new TaskCompletion("Databases", databasesTaskCompleted));
+            }
+            if (springTaskCompleted > 0) {
+                list1.add(new TaskCompletion("Spring", springTaskCompleted));
+            }
+
+            list2 = new ArrayList<>();
+            if (javaPoints > 0) {
+                float j = (javaPoints/(float)javaTaskCompleted) * 100;
+                //System.out.println(javaPoints);
+                //System.out.println(javaTaskCompleted);
+                //System.out.println(j);
+                list2.add(new CoursePoint("Java", j));
+            }
+            if (dsaPoints > 0) {
+                float ds = (dsaPoints/(float)dsaTaskCompleted) * 100;
+                //System.out.println(ds);
+                list2.add(new CoursePoint("DSA", ds));
+            }
+            if (databasesPoints > 0) {
+                float da = (databasesPoints/(float)databasesTaskCompleted) * 100;
+                //System.out.println(da);
+                list2.add(new CoursePoint("Databases", da));
+            }
+            if (springPoints > 0) {
+                float s = (springPoints/(float)springTaskCompleted) * 100;
+                //System.out.println(s);
+                list2.add(new CoursePoint("Spring", s));
+            }
+
+            if (CourseService.out) {
+                System.out.printf("\nEnrollees: %s %s %s %s\n", javaEnrollees, dsaEnrollees, databasesEnrollees, springEnrollees);
+                System.out.printf("\nPoints: %s %s %s %s\n", javaPoints, dsaPoints, databasesPoints, springPoints);
+                System.out.printf("\nTask Completed: %s %s %s %s\n", javaTaskCompleted, dsaTaskCompleted, databasesTaskCompleted, springTaskCompleted);
+            }
+
+            Comparator c = Collections.reverseOrder();
+            Collections.sort(list,c);
+            Collections.sort(list1,c);
+            Collections.sort(list2, c);
+        }
+
+        public String mostPopular() {
+
+            if (list.size() == 0){
+                return "n/a";
+            }
+
+            if (CourseService.equalEnrollment) {
+                int j = 0;
+                String n = "";
+                for(CourseEnrollment ce: list) {
+                    j++;
+                    if (j <= list.size()) {
+                        n = n + ce.getName();
+                        if (j != list.size()) {
+                            n = n + ", ";
+                        }
+                    }
+                }
+                return n;
+            }
+
+
+            int l = 0;
+            String m = "";
+            for(CourseEnrollment ce: list) {
+                l++;
+                if (l != list.size()) {
+                    m = m + ce.getName();
+                    if (l != list.size() - 1) {
+                        m = m + ", ";
+                    }
+                }
+            }
+            return m;
+
+        }
+
+        public String leastPopular() {
+            if (list.size() == 0){
+                return "n/a";
+            }
+            if (CourseService.equalEnrollment) {
+                return "n/a";
+            }
+            return list.get(list.size() - 1).getName();
+        }
+
+        public String highestActivity() {
+
+            if (list1.size() == 0){
+                return "n/a";
+            }
+            if (CourseService.equalTaskCompleted) {
+                //return "n/a";
+            }
+            if (CourseService.equalTaskCompleted) {
+                int j = 0;
+                String n = "";
+                for(TaskCompletion t: list1) {
+                    j++;
+                    if (j <= list1.size()) {
+                        n = n + t.getName();
+                        if (j != list1.size()) {
+                            n = n + ", ";
+                        }
+                    }
+                }
+                return n;
+            }
+            return list1.get(0).getName();
+        }
+
+        public String lowestActivity() {
+            if (list1.size() == 0){
+                return "n/a";
+            }
+            if (CourseService.equalTaskCompleted) {
+                return "n/a";
+            }
+            return list1.get(list1.size()-1).getName();
+        }
+
+        public String easiestCourse() {
+            if (list2.size() == 0){
+                return "n/a";
+            }
+            if (CourseService.equalPoints) {
+                return "n/a";
+            }
+            return list2.get(0).getName();
+        }
+
+        public String hardestCourse() {
+            if (list2.size() == 0){
+                return "n/a";
+            }
+            if (CourseService.equalPoints) {
+                return "n/a";
+            }
+            return list2.get(list2.size()-1).getName();
+        }
+
+    }
+  learner_created: true
+- name: src/tracker/Business/CoursePoint.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class CoursePoint implements Comparable{
+
+        private String name;
+        private double no;
+
+        public CoursePoint(String name, double no) {
+            this.name = name;
+            this.no = no;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public double getNo() {
+            return no;
+        }
+
+        public void setNo(double no) {
+            this.no = no;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return Double.compare(this.no, ((CoursePoint) o).getNo());
+        }
+    }
+  learner_created: true
+- name: src/tracker/model/Course.java
+  visible: true
+  text: |
+    package tracker.model;
+
+    import java.util.ArrayList;
+    import java.util.Arrays;
+    import java.util.List;
+    import java.util.Map;
+    import java.util.stream.Collectors;
+
+    public enum Course {
+        JAVA("Java", 600),
+        DSA("DSA", 400),
+        DATABASES("Databases", 480),
+        SPRING("Spring", 550);
+
+        public final String name;
+        public final int totalPoints;
+
+        private /* mutable */ int interactions;
+        private /* mutable */ int pointsAccumulatedByStudents;
+        private /* mutable */ int subscribed;
+
+        private static /* mutable */ int maxActivityScore = 0;
+        private static /* mutable */ int minActivityScore = Integer.MAX_VALUE;
+        private static /* mutable */ int maxPopularityScore = 0;
+        private static /* mutable */ int minPopularityScore = Integer.MAX_VALUE;
+        private static /* mutable */ float maxDifficultyScore = 0;
+        private static /* mutable */ float minDifficultyScore = Float.MAX_VALUE;
+
+
+        Course(String name, int totalPoints) {
+            this.name = name;
+            this.totalPoints = totalPoints;
+
+        }
+
+        public static boolean isCourse(String input) {
+            return Arrays.stream(Course.values()).anyMatch(course -> course.name.equalsIgnoreCase(input));
+        }
+
+        public static Course getByName(String name) {
+            return Course.valueOf(name.toUpperCase());
+        }
+
+        void updateCourseGeralStats(int points, boolean isNew){
+            interactions += points > 0 ? 1 : 0;
+            pointsAccumulatedByStudents += Math.max(points, 0);
+            subscribed += isNew && points > 0 ? 1 : 0;
+            updateScores(getActivityScore(), getPopularityScore(), getDifficultyScore());
+        }
+
+        public int getActivityScore(){
+            return interactions;
+        }
+
+        public int getPopularityScore() {
+            return subscribed;
+        }
+
+        public float getDifficultyScore() {
+            return 100.0f - ((float) pointsAccumulatedByStudents / interactions) ;
+        }
+
+        public static Map<String, String> getStatsMap() {
+            if(maxPopularityScore == 0) {
+                return Map.of(
+                        "Most popular", "n/a",
+                        "Least popular", "n/a",
+                        "Highest activity", "n/a",
+                        "Lowest activity", "n/a",
+                        "Easiest course", "n/a",
+                        "Hardest course", "n/a"
+                );
+            }
+
+            List<Course> maxPopularityList = new ArrayList<>();
+            List<Course> minPopularityList = new ArrayList<>();
+            List<Course> maxActivityList = new ArrayList<>();
+            List<Course> minActivityList = new ArrayList<>();
+            List<Course> maxDifficultyList = new ArrayList<>();
+            List<Course> minDifficultyList = new ArrayList<>();
+
+            for(Course course : Course.values()) {
+                if(course.getPopularityScore() == maxPopularityScore) {
+                    maxPopularityList.add(course);
+                } else if(course.getPopularityScore() == minPopularityScore) {
+                    minPopularityList.add(course);
+                }
+                if(course.getActivityScore() == maxActivityScore) {
+                    maxActivityList.add(course);
+                } else if(course.getActivityScore() == minActivityScore) {
+                    minActivityList.add(course);
+                }
+                if(course.getDifficultyScore() == maxDifficultyScore) {
+                    maxDifficultyList.add(course);
+                } else if(course.getDifficultyScore() == minDifficultyScore) {
+                    minDifficultyList.add(course);
+                }
+            }
+
+            return Map.of(
+                    "Most popular", maxPopularityList.stream().map(course -> course.name).collect(Collectors.joining(" ")),
+                    "Least popular", minPopularityList.stream().map(course -> course.name).collect(Collectors.joining(" ")),
+                    "Highest activity", maxActivityList.stream().map(course -> course.name).collect(Collectors.joining(" ")),
+                    "Lowest activity", minActivityList.stream().map(course -> course.name).collect(Collectors.joining(" ")),
+                    "Easiest course", minDifficultyList.stream().map(course -> course.name).collect(Collectors.joining(" ")),
+                    "Hardest course", maxDifficultyList.stream().map(course -> course.name).collect(Collectors.joining(" "))
+            );
+        }
+
+        private static void updateScores(int activityScore, int popularityScore, float difficultyScore) {
+
+            maxActivityScore = Math.max(maxActivityScore, activityScore);
+            maxPopularityScore = Math.max(maxPopularityScore, popularityScore);
+            maxDifficultyScore = Math.max(maxDifficultyScore, difficultyScore);
+            minActivityScore = Math.min(minActivityScore, activityScore);
+            minPopularityScore = Math.min(minPopularityScore, popularityScore);
+            minDifficultyScore = Math.min(minDifficultyScore, difficultyScore);
+
+        }
+    }
+  learner_created: true
+- name: src/tracker/Validator.java
+  visible: true
+  text: |
+    package tracker;
+
+    import java.util.Arrays;
+
+    public class Validator {
+
+        static boolean isValidCredentials(String[] args) {
+            return args.length >= 3;
+        }
+
+        static boolean isValidName(String name) {
+            return name.matches("(?i)^([a-z]['-]?)+[a-z]$");
+        }
+
+        static boolean isValidMail(String email) {
+            return email.matches("(?i)^[a-z0-9._-]+@[a-z0-9_-]+\\.([a-z0-9]\\.?)+$");
+        }
+
+        static boolean isValidPointsFormat(String[] idPointsInput) {
+            return idPointsInput.length == 5
+                    && Arrays.stream(idPointsInput).skip(1).allMatch(s -> s.matches("\\d+"));
+        }
+    }
+  learner_created: true
+- name: src/tracker/Database/Store.java
+  visible: true
+  text: |+
+    package tracker.Database;
+
+    import tracker.Business.Student;
+
+    import java.util.*;
+
+    public class Store {
+        private static Store instance;
+
+        private Map<String, Student> studentMap;
+        private Map<String, Student> studentMapWithId;
+
+        private Store() {
+            studentMap = new HashMap<>();
+            studentMapWithId = new TreeMap<>();
+        }
+
+        public static Store getInstance() {
+            if (instance == null) {
+                instance = new Store();
+            }
+            return instance;
+        }
+
+
+        public Student addStudent(Student student) {
+            return studentMap.put(student.getEmail(), student);
+        }
+
+        public Student findStudent(String email) {
+            return studentMap.get(email);
+        }
+
+        public boolean studentExist(String email) {
+            return studentMap.containsKey(email);
+        }
+
+        public List<Student> all() {
+            List<Student> students = new ArrayList<>();
+            for (Map.Entry<String, Student> entry : studentMap.entrySet()) {
+                students.add(entry.getValue());
+            }
+            return students;
+        }
+
+        public Student addStudentWithId(Student student) {
+            return studentMapWithId.put(student.getId(), student);
+        }
+
+        public Student findStudentWithId(String id) {
+            return studentMapWithId.get(id);
+        }
+
+        public boolean studentExistWithId(String id) {
+            return studentMapWithId.containsKey(id);
+        }
+
+        public List<Student> allWithId() {
+            List<Student> students = new ArrayList<>();
+            for (Map.Entry<String, Student> entry : studentMap.entrySet()) {
+                students.add(entry.getValue());
+            }
+            return students;
+        }
+
+        public Student update(Student student){
+            studentMap.put(student.getEmail(), student);
+            studentMapWithId.put(student.getId(), student);
+            return student;
+        }
+
+        public Map<String, Student> getStudentMap() {
+            return studentMap;
+        }
+
+        public void setStudentMap(Map<String, Student> studentMap) {
+            this.studentMap = studentMap;
+        }
+    }
+
+  learner_created: true
+- name: src/tracker/Business/Student.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import java.util.HashMap;
+    import java.util.Map;
+
+    public class Student implements Comparable{
+        private String id;
+        private String firstName;
+        private String lastName;
+        private String email;
+        private boolean javaEnrolled;
+        private boolean dsaEnrolled;
+        private boolean databasesEnrolled;
+        private boolean springEnrolled;
+        private Map<String, Course> courses;
+
+        public Student() {
+        }
+
+        public String getFirstName() {
+            return firstName;
+        }
+
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Map<String, Course> getCourses() {
+            return courses;
+        }
+
+        public void setCourses(Map<String, Course> courses) {
+            this.courses = new HashMap<>(courses);
+        }
+
+        public boolean isJavaEnrolled() {
+            return javaEnrolled;
+        }
+
+        public void setJavaEnrolled(boolean javaEnrolled) {
+            this.javaEnrolled = javaEnrolled;
+        }
+
+        public boolean isDsaEnrolled() {
+            return dsaEnrolled;
+        }
+
+        public void setDsaEnrolled(boolean dsaEnrolled) {
+            this.dsaEnrolled = dsaEnrolled;
+        }
+
+        public boolean isDatabasesEnrolled() {
+            return databasesEnrolled;
+        }
+
+        public void setDatabasesEnrolled(boolean databasesEnrolled) {
+            this.databasesEnrolled = databasesEnrolled;
+        }
+
+        public boolean isSpringEnrolled() {
+            return springEnrolled;
+        }
+
+        public void setSpringEnrolled(boolean springEnrolled) {
+            this.springEnrolled = springEnrolled;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            Student s = (Student) o;
+            return this.id.compareTo(((Student) o).getId());
+        }
+    }
+  learner_created: true
+- name: src/tracker/Tracker.java
+  visible: true
+  text: |
+    package tracker;
+
+    import tracker.Business.*;
+    import tracker.Helper.IDGenerator;
+    import tracker.Persistence.StudentRepository;
+
+    import java.math.BigDecimal;
+    import java.util.*;
+
+    public class Tracker {
+
+        private final Scanner scanner;
+        private List<Student> studentList;
+        private final StudentService studentService;
+        private final IDGenerator idGenerator;
+        private List<Completion> completionList;
+
+        public Tracker() {
+            this.scanner = new Scanner(System.in);
+            studentList = new ArrayList<>();
+            studentService = new StudentService();
+            idGenerator = new IDGenerator();
+        }
+
+        public void run() {
+            options();
+        }
+
+        public void options() {
+            System.out.println("Learning Progress Tracker");
+            while (true) {
+                String sel = scanner.nextLine().toLowerCase(Locale.ROOT);
+                switch (sel) {
+                    case "exit":
+                        System.out.println("Bye!");
+                        System.exit(0);
+                        break;
+                    case "statistics":
+                        CourseService cs = new CourseService();
+                        System.out.println("Type the name of a course to see details or 'back' to quit:");
+                        String si = "n/a";
+                            System.out.printf("\nMost popular: %s\n" +
+                                            "Least popular: %s\n" +
+                                            "Highest activity: %s\n" +
+                                            "Lowest activity: %s\n" +
+                                            "Easiest course: %s\n" +
+                                            "Hardest course: %s\n",
+                                    cs.mostPopular(),
+                                    cs.leastPopular(),
+                                    cs.highestActivity(),
+                                    cs.lowestActivity(),
+                                    cs.easiestCourse(),
+                                    cs.hardestCourse());
+
+                        //System.out.println(CourseService.equalEnrollment);
+                        int yx = 1;
+                        do {
+                            String sele = scanner.nextLine().toLowerCase(Locale.ROOT);
+                            switch (sele) {
+                                case "java":
+                                    System.out.println("Java");
+                                    processStat(sele);
+                                    break;
+                                case "dsa":
+                                    System.out.println("DSA");
+                                    processStat(sele);
+                                    break;
+                                case "databases":
+                                    System.out.println("Databases");
+                                    processStat(sele);
+                                    break;
+                                case "spring":
+                                    System.out.println("Spring");
+                                    processStat(sele);
+                                    break;
+                                case "back":
+                                    yx = 0;
+                                    break;
+                                default:
+                                    System.out.println("Unknown course");
+                            }
+
+                        }while (yx != 0);
+                        break;
+                    case "list":
+
+                        Set<Student> studentList = new TreeSet<>(studentService.allStudents());
+                        if (studentList.size() > 0) {
+                            System.out.println("Students:");
+                            for (Student s: studentList) {
+                                System.out.println(s.getId());
+                            }
+                        } else {
+                            System.out.println("No students found");
+                        }
+                        break;
+                    case "find":
+                        System.out.println("Enter an id or 'back' to return");
+                        int xy = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            if (string.equalsIgnoreCase("back")) {
+                                xy = 0;
+                            } else {
+                                if (!studentService.studentExistWithId(string)) {
+                                    System.out.printf("\nNo student is found for id=%s\n", string);
+                                } else {
+                                    Student foundStudent = studentService.findById(string);
+                                    Map<String, Course> courses = new HashMap<>(foundStudent.getCourses());
+                                    Course java = courses.get(Course.JAVA);
+                                    Course dsa = courses.get(Course.DSA);
+                                    Course databases = courses.get(Course.DATABASES);
+                                    Course spring = courses.get(Course.Spring);
+                                    System.out.printf("\n%s points: Java=%d; DSA=%d; Databases=%d; Spring=%d\n", string, java.getTotal(), dsa.getTotal(), databases.getTotal(), spring.getTotal());
+                                }
+                            }
+                        } while (xy != 0);
+                        break;
+                    case "add points":
+                        System.out.println("Enter an id and points or 'back' to return");
+                        int xx = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            if (string.equalsIgnoreCase("back")) {
+                                xx = 0;
+                            } else {
+                                String[] input = string.split(" ");
+                                if (input.length == 5) {
+                                    String id = input[0];
+
+
+                                    try {
+                                        int p1 = Integer.parseInt(input[1]);
+                                        int p2 = Integer.parseInt(input[2]);
+                                        int p3 = Integer.parseInt(input[3]);
+                                        int p4 = Integer.parseInt(input[4]);
+                                        if (!studentService.studentExistWithId(id)) {
+                                            System.out.printf("\nNo student is found for id=%s\n", id);
+                                        } else {
+                                            if(p1 < 0 || p2 < 0 || p3 < 0 || p4 < 0 ) {
+                                                System.out.println("Incorrect points format");
+                                            } else {
+                                                Student foundStudent = studentService.findById(id);
+                                                List<Integer> points = List.of(p1, p2, p3, p4);
+                                                studentService.updateCoursePoints(foundStudent, points);
+                                                System.out.println("Points updated.");
+                                            }
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Incorrect points format");
+                                    }
+
+
+                                } else {
+                                    System.out.println("Incorrect points format");
+                                }
+                            }
+
+                        } while (xx != 0);
+                        break;
+                    case "back":
+                        System.out.println("Enter 'exit' to exit the program");
+                        break;
+                    case "":
+                        System.out.println("no input");
+                        break;
+                    case "add students":
+                        System.out.println("Enter student credentials or 'back' to return:");
+                        int ex = 1;
+                        do {
+                            String string = scanner.nextLine();
+                            //System.out.println(string);
+                            String[] input = string.split(" ");
+                            if (input.length >= 3) {
+                                String firstName = input[0];
+                                String lastName = "";
+                                String email = input[input.length-1];
+                                for (int i = 0; i < input.length; i++) {
+                                    if (i != 0 && i != input.length - 1) {
+                                        lastName = lastName + input[i] + " ";
+                                    }
+                                }
+                                lastName = lastName.strip();
+                                boolean valid = true;
+                                if (firstName.length() <= 1 || !firstName.matches("[a-zA-Z'\\-]*") || firstName.startsWith("'") || firstName.startsWith("-") || firstName.endsWith("-") || firstName.endsWith("'") || firstName.contains("'-") || firstName.contains("-'") || firstName.contains("--") || firstName.contains("''")){
+                                    System.out.println("Incorrect first name.");
+                                    valid = false;
+                                }
+                                if (lastName.length() <= 1 || !lastName.matches("[a-zA-Z'\\- ]*") || lastName.startsWith("'") || lastName.startsWith("-") || lastName.endsWith("-") || lastName.endsWith("'") || lastName.contains("'-") || lastName.contains("-'") || lastName.contains("--") || lastName.contains("''")){
+                                    System.out.println("Incorrect last name.");
+                                    valid = false;
+                                    //System.out.println(lastName);
+                                }
+
+                                if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z0-9]+$")) {
+                                    System.out.println("Incorrect email.");
+                                    valid = false;
+                                }
+
+
+                                if (valid){
+                                    String id = idGenerator.generate4Digits();
+                                    //System.out.println(id);
+                                    if (studentService.studentExistWithEmail(email)) {
+                                        System.out.println("This email is already taken.");
+                                    } else {
+                                        Student createdStudent = studentService.createStudent(id, firstName, lastName, email);
+                                        if (createdStudent != null) {
+                                            add(createdStudent);
+                                            System.out.println("The student has been added.");
+                                        }
+                                    }
+
+                                }
+
+                            } else {
+                                if (input.length == 1 && string.equalsIgnoreCase("back")) {
+                                    int noOfStudent = addAfterExit();
+                                    System.out.printf("\nTotal %s students have been added.\n", noOfStudent);
+
+                                    ex = 0;
+                                } else {
+                                    System.out.println("Incorrect credentials.");
+                                }
+                            }
+
+                        } while (ex != 0);
+                        break;
+                    default:
+                        if (sel.isBlank() || sel.isEmpty()) {
+                            System.out.println("no input");
+                        } else {
+                            System.out.println("Unknown command!");
+                        }
+                        break;
+                }
+            }
+        }
+
+        public void processStat(String course) {
+            completionList = new ArrayList<>();
+            Set<Student> studentList = new TreeSet<>(studentService.allStudents());
+            System.out.println("id  points      completed");
+            if (studentList.size() > 0) {
+                for (Student s: studentList) {
+                    Map<String, Course> courses = new HashMap<>(s.getCourses());
+                    Course course1 = null;
+                    switch (course) {
+                        case "java":
+                            course1 = courses.get(Course.JAVA);
+                            courseStat(course1, s.getId(), 600);
+                            break;
+                        case "dsa":
+                            course1 = courses.get(Course.DSA);
+                            courseStat(course1, s.getId(), 400);
+                            break;
+                        case "databases":
+                            course1 = courses.get(Course.DATABASES);
+                            courseStat(course1, s.getId(), 480);
+                            break;
+                        case "spring":
+                            course1 = courses.get(Course.Spring);
+                            courseStat(course1, s.getId(), 550);
+                            break;
+                        default:
+                    }
+
+                }
+                printStat();
+            }
+        }
+
+        public void printStat() {
+            Comparator c = Collections.reverseOrder();
+            Collections.sort(completionList,c);
+            for (Completion completion: completionList) {
+                Double toBeTruncated = new Double(completion.getCompleted());
+
+                Double truncatedDouble = new BigDecimal(toBeTruncated).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+                System.out.println(completion.getId() +
+                        " "+completion.getPoints()
+                        +"        "+truncatedDouble+"%");
+            }
+        }
+
+        public void courseStat(Course course, String id, float totalPoints) {
+            int points = course.getTotal();
+            if (points == 0) {
+                return;
+            }
+            float completed = (points/totalPoints) * 100;
+            Completion completion = new Completion(id, points, completed);
+            completionList.add(completion);
+        }
+
+        public void add(Student s){
+            studentList.add(s);
+            studentService.save(s);
+        }
+
+        public int addAfterExit() {
+            for (Student s: studentList) {
+                //studentService.save(s);
+            }
+            int total = studentList.size();
+            studentList = new ArrayList<>();
+            return total;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/CourseEnrollment.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class CourseEnrollment implements Comparable{
+        private String name;
+        private int no;
+
+        public CourseEnrollment(String name, int no) {
+            this.name = name;
+            this.no = no;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getNo() {
+            return no;
+        }
+
+        public void setNo(int no) {
+            this.no = no;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return Integer.compare(this.no, ((CourseEnrollment) o).getNo());
+        }
+    }
+  learner_created: true
+- name: src/tracker/UI.java
+  visible: true
+  text: |
+    package tracker;
+
+    import tracker.controller.Controller;
+    import tracker.model.Course;
+    import tracker.model.Student;
+
+    import java.util.Arrays;
+    import java.util.Optional;
+    import java.util.Scanner;
+    import java.util.stream.Collectors;
+    import java.util.stream.Stream;
+
+    import static tracker.Validator.isValidCredentials;
+    import static tracker.Validator.isValidMail;
+    import static tracker.Validator.isValidName;
+    import static tracker.Validator.isValidPointsFormat;
+    import static tracker.UI.Constants.*;
+    import static java.lang.System.out;
+
+
+
+    public class UI {
+
+        final Scanner scanner;
+        final Controller controller;
+
+
+        public UI(Scanner scanner, Controller controller) {
+            this.scanner = scanner;
+            this.controller = controller;
+
+        }
+
+        public void interact(){
+            out.println(initialGreeting);
+
+            Stream.generate(scanner::nextLine)
+                    .map(input -> controller.processMainInput(input, this))
+                    .filter(str -> !str.isBlank())
+                    .peek(System.out::println)
+                    .takeWhile(response ->  !response.equals(GoodBye))
+                    .forEach(str -> {});
+        }
+
+        public String addStudentsInteraction() {
+            out.println(addStudentsMenu);
+            return addStudentsInteraction(0);
+        }
+
+        private String addStudentsInteraction(int count) {
+            final String input = scanner.nextLine();
+
+            if(input.equalsIgnoreCase(commandBack)){
+                return String.format(responseAddedStudentsResultTemplate, count);
+            }
+
+            final String[] args = input.trim().split("\\s+");
+
+
+            if(!isValidCredentials(args)) {
+                out.println(invalidCredentials);
+                return addStudentsInteraction(count);
+
+            } else if(!isValidName(args[0])) {
+                out.println(invalidFirstName);
+                return addStudentsInteraction(count);
+
+            } else if(Arrays.stream(args).skip(1).limit(args.length - 2).anyMatch(arg -> !isValidName(arg))){
+                out.println(invalidLastName);
+                return addStudentsInteraction(count);
+
+            } else if(!isValidMail(args[args.length - 1])){
+                out.println(invalidEmail);
+                return addStudentsInteraction(count);
+
+            } else if(!controller.emailIsUnique(args[args.length - 1])) {
+                out.println("This email is already taken.");
+                return addStudentsInteraction(count);
+            } else {
+                final String lastName = Arrays.stream(args)
+                        .skip(1)
+                        .limit(args.length - 2)
+                        .collect(Collectors.joining(" "));
+
+                controller.addStudent(args[0], lastName, args[args.length - 1]);
+                out.println(studentAdded);
+                return addStudentsInteraction(count + 1);
+            }
+        }
+
+        public String addPointsInteraction(boolean printHeader) {
+            if(printHeader) {
+                out.println(addPointsMenu);
+            }
+            final String idAndPointsInput = scanner.nextLine();
+            if(idAndPointsInput.equals(commandBack)) {
+                return "";
+            }
+
+            final String[] inputIdPointsArray = idAndPointsInput.split("\\s+");
+
+            if(!isValidPointsFormat(inputIdPointsArray)) {
+                out.println(invalidPointsFormat);
+                return addPointsInteraction(false);
+            }
+
+            final Optional<Student> studentById = controller.findStudentById(inputIdPointsArray[0]);
+
+            if(studentById.isEmpty()) {
+                out.printf(responseStudentIdNotFoundTemplate + "\n", inputIdPointsArray[0]);
+
+            } else {
+                controller.addPoints(inputIdPointsArray, studentById.get());
+                out.println(responsePointsUpdated);
+            }
+
+            return addPointsInteraction(false);
+
+        }
+
+        public String findInteraction(boolean printHeader) {
+            if(printHeader) {
+                out.println(findMenu);
+            }
+
+            final String idInput = scanner.nextLine();
+
+            if(idInput.equals(commandBack)) {
+                return "";
+            }
+
+            final Optional<Student> studentById = controller.findStudentById(idInput);
+
+            if(studentById.isEmpty()) {
+                out.printf(responseStudentIdNotFoundTemplate + "\n", idInput);
+            } else {
+                out.println(studentById.get().getStudentPoints());
+            }
+
+            return findInteraction(false);
+
+        }
+
+        public String statisticsInteraction(boolean printHeader) {
+            if(printHeader) {
+                out.println(statisticsMenu);
+                out.println(controller.getStatisticsReport());
+            }
+
+
+            final String input = scanner.nextLine();
+
+            if(input.equals(commandBack)) {
+                return "";
+            } else if(!Course.isCourse(input)){
+                out.println("Unknown course.");
+            }else {
+                out.println(controller.getCourseStats(input));
+            }
+
+            return statisticsInteraction(false);
+        }
+
+
+        public static class Constants {
+            final static public String initialGreeting = "---===¡!¡()-Learning-Progress-Tracker-()!¡!===---";
+            final static public String GoodBye = "Good-Bye!";
+            final static public String addStudentsMenu = "Enter student credentials or 'back' to return:";
+            final static public String addPointsMenu = "Enter an id and points or 'back' to return:";
+            final static public String findMenu = "Enter an id or 'back' to return:";
+            final static public String statisticsMenu = "Type the name of a course to see details or 'back' to quit:";;
+
+
+
+            final static public String commandAddStudents = "add students";
+            final static public String commandAddPoints = "add points";
+            final static public String commandBack = "back";
+            final static public String commandExit = "exit";
+            final static public String commandFind = "find";
+            final static public String commandListStudents = "list";
+            final static public String commandStatistics = "statistics";
+
+
+            final static public String commandEmpty = "";
+
+            final static public String responseAddedStudentsResultTemplate = "There was a total of %d students added";
+            final static public String responseStudentsPointsTemplate = "%s points: %s=%d; %s=%d; %s=%d; %s=%d";
+            final static public String responseStudentIdNotFoundTemplate = "No student is found for id=%s.";
+
+            final static public String responseBack = "Do you wish to quit the program? You may enter exit to do so";
+            final static public String responseEmpty = "oooops....that's no input, try again";
+            final static public String responseInvalidCommand =
+                    "Hmm... that is unknown for me. You can try a new command or type exit to leave";
+            final static public String responseListStudentsNoneFound = "No students found";
+            final static public String responseListStudentsHeader = "Students:\n";
+            final static public String responsePointsUpdated = "Points updated.";
+
+
+
+            final static public String invalidCredentials = "Nope, incorrect credentials, should be name lastnames email";
+            final static public String invalidEmail = "That's some incorrect email, don't try to fool me";
+            final static public String invalidFirstName = "Incorrect first name it probably is";
+            final static public String invalidLastName =  "I'm sure this is an incorrect last name";
+            final static public String invalidPointsFormat = "Incorrect points format.";
+
+
+            final static public String studentAdded = "yeah student has been added.";
+
+
+        }
+
+
+    }
+  learner_created: true
+- name: src/tracker/Business/StudentService.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    import tracker.Persistence.StudentRepository;
+
+    import java.util.ArrayList;
+    import java.util.HashMap;
+    import java.util.List;
+    import java.util.Map;
+
+    public class StudentService {
+
+        private StudentRepository studentRepository;
+
+
+        public StudentService() {
+            studentRepository = new StudentRepository();
+
+        }
+
+        public Student createStudent(String id, String fName, String lName, String email) {
+            Student student = new Student();
+            if (fName.isBlank() || fName.isEmpty()) {
+                return null;
+            }
+            if (lName.isBlank() || lName.isEmpty()) {
+                return null;
+            }
+            if (email.isBlank() || email.isEmpty()) {
+                return null;
+            }
+            student.setId(id);
+            student.setFirstName(fName);
+            student.setLastName(lName);
+            student.setEmail(email);
+            Course course1 = new Course();
+            Course course2 = new Course();
+            Course course3 = new Course();
+            Course course4 = new Course();
+            course1.setCourseName(Course.JAVA);
+            course2.setCourseName(Course.DSA);
+            course3.setCourseName(Course.DATABASES);
+            course4.setCourseName(Course.Spring);
+            Map<String, Course> courses = new HashMap<>();
+            courses.put(course1.getCourseName(), course1);
+            courses.put(course2.getCourseName(), course2);
+            courses.put(course3.getCourseName(), course3);
+            courses.put(course4.getCourseName(), course4);
+            student.setCourses(courses);
+
+            return student;
+        }
+
+
+
+        public Student save(Student student) {
+            studentRepository.addStudentWithId(student);
+            return studentRepository.addStudent(student);
+        }
+
+        public Student findByEmail(String email) {
+            return studentRepository.findStudent(email);
+        }
+
+        public Student findById(String id) {
+            return studentRepository.findStudentWithId(id);
+        }
+
+        public boolean studentExistWithEmail(String email) {
+            return studentRepository.studentExist(email);
+        }
+
+        public boolean studentExistWithId(String id) {
+            return studentRepository.studentExistWithId(id);
+        }
+
+        public List<Student> allStudents() {
+            return studentRepository.allStudents();
+        }
+
+        public void updateCoursePoints(Student student, List<Integer> points) {
+            Map<String, Course> courses = new HashMap<>(student.getCourses());
+            int javaPoint = points.get(0);
+            int dsaPoint = points.get(1);
+            int databasesPoint = points.get(2);
+            int springPoint = points.get(3);
+            if (javaPoint != 0 && !student.isJavaEnrolled()) {
+                Course.setJavaEnrollee(1);
+                student.setJavaEnrolled(true);
+            }
+            if (dsaPoint != 0 && !student.isDsaEnrolled()) {
+                Course.setDsaEnrollee(1);
+                student.setDsaEnrolled(true);
+            }
+            if (databasesPoint != 0 && !student.isDatabasesEnrolled()) {
+                Course.setDatabasesEnrollee(1);
+                student.setDatabasesEnrolled(true);
+            }
+            if (springPoint != 0 && !student.isSpringEnrolled()) {
+                Course.setSpringEnrollee(1);
+                student.setSpringEnrolled(true);
+            }
+            if (javaPoint > 0) {
+                Course.setJavaTaskCompleted(1);
+            }
+            if (dsaPoint > 0) {
+                Course.setDsaTaskCompleted(1);
+            }
+            if (databasesPoint > 0) {
+                Course.setDatabasesTaskCompleted(1);
+            }
+            if (springPoint > 0) {
+                Course.setSpringTaskCompleted(1);
+            }
+
+            Course.setJavaPoints(javaPoint);
+            Course.setDsaPoints(dsaPoint);
+            Course.setDatabasesPoints(databasesPoint);
+            Course.setSpringPoints(springPoint);
+
+            courses.get(Course.JAVA).setTotal(javaPoint);
+            courses.get(Course.DSA).setTotal(dsaPoint);
+            courses.get(Course.DATABASES).setTotal(databasesPoint);
+            courses.get(Course.Spring).setTotal(springPoint);
+            studentRepository.update(student);
+        }
+    }
+  learner_created: true
+- name: src/tracker/model/TrackCourseStats.java
+  visible: true
+  text: |
+    package tracker.model;
+
+    import java.math.BigDecimal;
+    import java.math.RoundingMode;
+
+    public class TrackCourseStats {
+
+        public final int points;
+        public final int interactions;
+        public final Course course;
+
+        public TrackCourseStats(Course course){
+            this.points = 0;
+            this.interactions = 0;
+            this.course = course;
+        }
+
+        private TrackCourseStats(int points, int interactions, Course course) {
+            this.points = points;
+            this.interactions = interactions;
+            this.course = course;
+        }
+
+        public TrackCourseStats addInteraction(int points){
+            course.updateCourseGeralStats(points, this.points == 0);
+            return points > 0 ?
+                    new TrackCourseStats(
+                            this.points + points, this.interactions + 1, this.course
+                    )
+                    : this;
+        }
+
+        public String completedPercentual(){
+
+            final double percentual = BigDecimal.valueOf(100.0)
+                    .multiply(BigDecimal.valueOf(points))
+                    .divide(BigDecimal.valueOf(course.totalPoints),1, RoundingMode.HALF_UP)
+                    .doubleValue();
+            return String.format("%.1f%%", percentual);
+        }
+    }
+  learner_created: true
+- name: src/tracker/model/Student.java
+  visible: true
+  text: |
+    package tracker.model;
+
+    import tracker.UI;
+
+    import java.util.HashMap;
+    import java.util.Map;
+    import static tracker.model.Course.*;
+
+    public class Student {
+
+        static int idSequenceGenerator = 1000000;
+
+        public final String id;
+        public final String firstName;
+        public final String lastNames;
+        public final String email;
+
+        private final Map<Course, TrackCourseStats> courses = new /*mutable*/HashMap<>(
+                Map.of(
+                        JAVA, new TrackCourseStats(JAVA),
+                        DATABASES, new TrackCourseStats(DATABASES),
+                        DSA, new TrackCourseStats(DSA),
+                        SPRING, new TrackCourseStats(SPRING)
+                )
+        );
+
+        public Student(String firstName, String lastNames, String email) {
+            this.id = String.valueOf(++idSequenceGenerator);
+            this.firstName = firstName;
+            this.lastNames = lastNames;
+            this.email = email;
+        }
+
+        public String getStudentPoints(){
+            return String.format(UI.Constants.responseStudentsPointsTemplate,
+                    id,
+                    JAVA.name, courses.get(JAVA).points,
+                    DSA.name, courses.get(DSA).points,
+                    DATABASES.name, courses.get(DATABASES).points,
+                    SPRING.name, courses.get(SPRING).points
+            );
+        }
+
+        public TrackCourseStats getCourseTrackerInfo(Course course) {
+            return courses.get(course);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Student student = (Student) o;
+
+            return email.equals(student.email);
+        }
+
+        @Override
+        public int hashCode() {
+            return email.hashCode();
+        }
+
+        public void updatePoints(int[] points) {
+            courses.replace(JAVA, courses.get(JAVA).addInteraction(points[0]));
+            courses.replace(DSA, courses.get(DSA).addInteraction(points[1]));
+            courses.replace(DATABASES, courses.get(DATABASES).addInteraction(points[2]));
+            courses.replace(SPRING, courses.get(SPRING).addInteraction(points[3]));
+        }
+    }
+  learner_created: true
+- name: src/tracker/StudentsRepository.java
+  visible: true
+  text: |
+    package tracker;
+
+    import tracker.model.Student;
+
+    import java.util.Collection;
+    import java.util.Comparator;
+    import java.util.Optional;
+    import java.util.TreeSet;
+    import java.util.stream.Collectors;
+
+
+    public class StudentsRepository {
+
+        public final Collection<Student> studentsRepository =
+                new TreeSet<>(Comparator.comparing(a -> a.id));
+
+        public boolean contains(String email) {
+            return studentsRepository.stream().anyMatch(student -> student.email.equals(email));
+        }
+
+        public boolean add(String name, String lastName, String email){
+            if(contains(email)) {
+                return false;
+            } else {
+                studentsRepository.add(new Student(name, lastName, email));
+                return true;
+            }
+        }
+
+        public String listStudentsId() {
+            return studentsRepository.stream()
+                    .map(student -> student.id)
+                    .collect(Collectors.joining("\n"));
+        }
+
+        public Optional<Student> findById(String id) {
+            return studentsRepository.stream().filter(student -> student.id.equals(id))
+                    .findFirst();
+        }
+    }
+  learner_created: true
+- name: src/tracker/Persistence/IStudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+
+    import java.util.List;
+
+    public interface IStudentRepository {
+        public Student addStudent(Student student);
+        public Student findStudent(String email);
+        public boolean studentExist(String email);
+        public Student addStudentWithId(Student student);
+        public Student findStudentWithId(String id);
+        public boolean studentExistWithId(String id);
+        public List<Student> allStudents();
+        public List<Student> allStudentsWithId();
+        public Student update(Student student);
+    }
+  learner_created: true
+- name: src/tracker/controller/Controller.java
+  visible: true
+  text: |
+    package tracker.controller;
+
+    import tracker.StudentsRepository;
+    import tracker.UI;
+    import tracker.model.Course;
+    import tracker.model.Student;
+    import tracker.model.TrackCourseStats;
+
+    import java.util.Arrays;
+    import java.util.Map;
+    import java.util.Optional;
+    import java.util.stream.Collectors;
+
+    import static tracker.UI.Constants.*;
+
+    public class Controller {
+
+        final StudentsRepository repository;
+
+        public Controller(StudentsRepository repository) {
+            this.repository = repository;
+        }
+
+        public String processMainInput(String input, UI ui){
+            switch (input.trim().toLowerCase()) {
+                case commandAddPoints: return ui.addPointsInteraction(true);
+                case commandAddStudents: return ui.addStudentsInteraction();
+                case commandBack: return responseBack;
+                case commandEmpty: return responseEmpty;
+                case commandFind: return ui.findInteraction(true);
+                case commandExit: return GoodBye;
+                case commandListStudents: {
+                    final String listStudentsId = repository.listStudentsId();
+                    return listStudentsId.equals("") ?
+                            responseListStudentsNoneFound : responseListStudentsHeader + listStudentsId;
+                }
+                case commandStatistics: return ui.statisticsInteraction(true);
+                default: return responseInvalidCommand;
+            }
+        }
+
+
+        public boolean emailIsUnique(String email) {
+            return !repository.contains(email);
+        }
+
+        public void addStudent(String name, String lastName, String email) {
+            final boolean wasSuccessful = repository.add(name, lastName, email);
+
+            if(!wasSuccessful){
+                throw new IllegalArgumentException(
+                        "email already exists, you should check if email is unique before adding"
+                );
+            }
+        }
+
+        public Optional<Student> findStudentById(String id) {
+            return repository.findById(id);
+        }
+
+        public void addPoints(String[] inputIdPointsArray, Student student) {
+            final int[] points = Arrays.stream(inputIdPointsArray).skip(1)
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+
+            student.updatePoints(points);
+        }
+
+        public String getCourseStats(String input) {
+            final Course course = Course.getByName(input);
+
+            final String listStudentsAsString = repository.studentsRepository.stream()
+                    .filter(student -> student.getCourseTrackerInfo(course).points != 0)
+                    .sorted((a, b) -> {
+                        final TrackCourseStats aInfo = a.getCourseTrackerInfo(course);
+                        final TrackCourseStats bInfo = b.getCourseTrackerInfo(course);
+                        if (aInfo.points != bInfo.points) {
+                            return bInfo.points - aInfo.points;
+                        } else {
+                            return a.id.compareTo(b.id);
+                        }
+                    }).map(student -> {
+                        final TrackCourseStats trackerInfo = student.getCourseTrackerInfo(course);
+                        return String.format("%s %d %s",
+                                student.id, trackerInfo.points, trackerInfo.completedPercentual());
+                    }).collect(Collectors.joining("\n"));
+
+            return new StringBuilder()
+                    .append(course.name).append("\n")
+                    .append("id    points    completed\n")
+                    .append(listStudentsAsString).toString();
+        }
+
+        public String getStatisticsReport() {
+            final Map<String, String> statsMap = Course.getStatsMap();
+
+            return String.format("Most popular: %s\nLeast popular: %s\nHighest activity: %s\nLowest activity: %s\nEasiest course: %s\nHardest course: %s",
+                    statsMap.get("Most popular"), statsMap.get("Least popular").isBlank() ? "n/a" : statsMap.get("Least popular"),
+                    statsMap.get("Highest activity"), statsMap.get("Lowest activity").isBlank() ? "n/a" : statsMap.get("Lowest activity"),
+                    statsMap.get("Easiest course").isBlank() ? "n/a" : statsMap.get("Easiest course"), statsMap.get("Hardest course")
+            );
+        }
+    }
+  learner_created: true
+- name: src/tracker/Persistence/StudentRepository.java
+  visible: true
+  text: |
+    package tracker.Persistence;
+
+    import tracker.Business.Student;
+    import tracker.Database.Store;
+
+    import java.util.List;
+
+    public class StudentRepository implements IStudentRepository{
+
+        private Store store = Store.getInstance();
+
+        @Override
+        public Student addStudent(Student student) {
+            return store.addStudent(student);
+        }
+
+        @Override
+        public Student findStudent(String email) {
+            return store.findStudent(email);
+        }
+
+        @Override
+        public boolean studentExist(String email) {
+            return store.studentExist(email);
+        }
+
+        @Override
+        public Student addStudentWithId(Student student) {
+            return store.addStudentWithId(student);
+        }
+
+        @Override
+        public Student findStudentWithId(String id) {
+            return store.findStudentWithId(id);
+        }
+
+        @Override
+        public boolean studentExistWithId(String id) {
+            return store.studentExistWithId(id);
+        }
+
+        @Override
+        public List<Student> allStudents() {
+            return store.all();
+        }
+
+        @Override
+        public List<Student> allStudentsWithId() {
+            return store.allWithId();
+        }
+
+        @Override
+        public Student update(Student student) {
+            return store.update(student);
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/Course.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class Course {
+        public final static String JAVA = "Java";
+        public final static String DSA = "Data Structures and Algorithms (DSA)";
+        public final static String DATABASES = "Databases";
+        public final static String Spring = "Spring";
+
+        private static int javaEnrollee = 0;
+        private static int dsaEnrollee = 0;
+        private static int databasesEnrollee = 0;
+        private static int springEnrollee = 0;
+
+        private static int javaPoints = 0;
+        private static int dsaPoints = 0;
+        private static int databasesPoints = 0;
+        private static int springPoints = 0;
+
+        private static int javaTaskCompleted = 0;
+        private static int dsaTaskCompleted = 0;
+        private static int databasesTaskCompleted = 0;
+        private static int springTaskCompleted = 0;
+
+        private String courseName;
+        private int total = 0;
+
+        public Course() {
+        }
+
+        public String getCourseName() {
+            return courseName;
+        }
+
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+
+        public int getTotal() {
+            return total;
+        }
+
+        public void setTotal(int point) {
+            this.total = getTotal() + point;
+        }
+
+        public static int getJavaEnrollee() {
+            return javaEnrollee;
+        }
+
+        public static void setJavaEnrollee(int javaEnrollee) {
+            Course.javaEnrollee = Course.javaEnrollee + javaEnrollee;
+        }
+
+        public static int getDsaEnrollee() {
+            return dsaEnrollee;
+        }
+
+        public static void setDsaEnrollee(int dsaEnrollee) {
+            Course.dsaEnrollee = Course.dsaEnrollee + dsaEnrollee;
+        }
+
+        public static int getDatabasesEnrollee() {
+            return databasesEnrollee;
+        }
+
+        public static void setDatabasesEnrollee(int databasesEnrollee) {
+            Course.databasesEnrollee = Course.databasesEnrollee + databasesEnrollee;
+        }
+
+        public static int getSpringEnrollee() {
+            return springEnrollee;
+        }
+
+        public static void setSpringEnrollee(int springEnrollee) {
+            Course.springEnrollee = Course.springEnrollee + springEnrollee;
+        }
+
+        public static int getJavaTaskCompleted() {
+            return javaTaskCompleted;
+        }
+
+        public static void setJavaTaskCompleted(int javaTaskCompleted) {
+            Course.javaTaskCompleted = Course.javaTaskCompleted + javaTaskCompleted;
+        }
+
+        public static int getDsaTaskCompleted() {
+            return dsaTaskCompleted;
+        }
+
+        public static void setDsaTaskCompleted(int dsaTaskCompleted) {
+            Course.dsaTaskCompleted = Course.dsaTaskCompleted + dsaTaskCompleted;
+        }
+
+        public static int getDatabasesTaskCompleted() {
+            return databasesTaskCompleted;
+        }
+
+        public static void setDatabasesTaskCompleted(int databasesTaskCompleted) {
+            Course.databasesTaskCompleted = Course.databasesTaskCompleted + databasesTaskCompleted;
+        }
+
+        public static int getSpringTaskCompleted() {
+            return springTaskCompleted;
+        }
+
+        public static void setSpringTaskCompleted(int springTaskCompleted) {
+            Course.springTaskCompleted = Course.springTaskCompleted +  springTaskCompleted;
+        }
+
+        public static int getJavaPoints() {
+            return javaPoints;
+        }
+
+        public static void setJavaPoints(int javaPoints) {
+            Course.javaPoints = Course.javaPoints + javaPoints;
+        }
+
+        public static int getDsaPoints() {
+            return dsaPoints;
+        }
+
+        public static void setDsaPoints(int dsaPoints) {
+            Course.dsaPoints = Course.dsaPoints + dsaPoints;
+        }
+
+        public static int getDatabasesPoints() {
+            return databasesPoints;
+        }
+
+        public static void setDatabasesPoints(int databasesPoints) {
+            Course.databasesPoints = Course.databasesPoints + databasesPoints;
+        }
+
+        public static int getSpringPoints() {
+            return springPoints;
+        }
+
+        public static void setSpringPoints(int springPoints) {
+            Course.springPoints = Course.springPoints + springPoints;
+        }
+    }
+  learner_created: true
+- name: src/tracker/Helper/IDGenerator.java
+  visible: true
+  text: |
+    package tracker.Helper;
+
+    import java.util.Random;
+
+    public class IDGenerator {
+        private int leftLimit = 48;
+        private int rightLimit = 57;
+        private int targetStringLength = 5;
+        private Random random = new Random(1000000);
+
+        public String generate4Digits() {
+            return random.ints(leftLimit, rightLimit + 1)
+                    .limit(targetStringLength)
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/TaskCompletion.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class TaskCompletion implements Comparable{
+
+        private String name;
+        private int no;
+
+        public TaskCompletion(String name, int no) {
+            this.name = name;
+            this.no = no;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getNo() {
+            return no;
+        }
+
+        public void setNo(int no) {
+            this.no = no;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return Integer.compare(this.no, ((TaskCompletion) o).getNo());
+        }
+    }
+  learner_created: true
+- name: src/tracker/Business/Completion.java
+  visible: true
+  text: |
+    package tracker.Business;
+
+    public class Completion implements Comparable{
+        private String id;
+        private int points;
+        private float completed;
+
+        public Completion(String id, int points, float completed) {
+            this.id = id;
+            this.points = points;
+            this.completed = completed;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public int getPoints() {
+            return points;
+        }
+
+        public void setPoints(int points) {
+            this.points = points;
+        }
+
+        public float getCompleted() {
+            return completed;
+        }
+
+        public void setCompleted(float completed) {
+            this.completed = completed;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            int j = Integer.compare(this.points, ((Completion) o).getPoints());
+            if (j == 0) {
+                return id.compareTo(((Completion) o).getId());
+            }
+            return Integer.compare(this.points, ((Completion) o).getPoints());
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/14400#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Well done! You've finished the project. Select a new project on <a href="https://hyperskill.org/projects">JetBrains
+    Academy</a> to continue learning.
+  time: Wed, 02 Mar 2022 11:14:10 UTC
 record: -1

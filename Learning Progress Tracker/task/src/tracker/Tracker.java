@@ -39,18 +39,20 @@ public class Tracker {
                     CourseService cs = new CourseService();
                     System.out.println("Type the name of a course to see details or 'back' to quit:");
                     String si = "n/a";
-                    System.out.printf("\nMost popular: %s\n" +
-                            "Least popular: %s\n" +
-                            "Highest activity: %s\n" +
-                            "Lowest activity: %s\n" +
-                            "Easiest course: %s\n" +
-                            "Hardest course: %s\n",
-                            cs.mostPopular(),
-                            cs.leastPopular(),
-                            cs.highestActivity(),
-                            cs.lowestActivity(),
-                            cs.easiestCourse(),
-                            cs.hardestCourse());
+                        System.out.printf("\nMost popular: %s\n" +
+                                        "Least popular: %s\n" +
+                                        "Highest activity: %s\n" +
+                                        "Lowest activity: %s\n" +
+                                        "Easiest course: %s\n" +
+                                        "Hardest course: %s\n",
+                                cs.mostPopular(),
+                                cs.leastPopular(),
+                                cs.highestActivity(),
+                                cs.lowestActivity(),
+                                cs.easiestCourse(),
+                                cs.hardestCourse());
+
+                    //System.out.println(CourseService.equalEnrollment);
                     int yx = 1;
                     do {
                         String sele = scanner.nextLine().toLowerCase(Locale.ROOT);

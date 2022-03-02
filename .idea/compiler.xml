@@ -8,6 +8,7 @@
       <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-reports-tests.main" target="11" />
       <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-test-results.main" target="11" />
       <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-build-tmp.main" target="11" />
+      <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task-out.main" target="11" />
       <module name="Learning_Progress_Tracker.Learning_Progress_Tracker-task.main" target="11" />
       <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-A_proper_collection_to_avoid_duplicates.main" target="11" />
       <module name="Learning_Progress_Tracker.Topics-Choosing_the_right_collection-A_proper_collection_to_store_ordered_key-value_pairs.main" target="11" />
